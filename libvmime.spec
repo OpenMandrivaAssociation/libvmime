@@ -28,6 +28,8 @@ Patch5:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/v
 Patch6:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-flush-iconv.diff
 Patch7:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-fullname-without-email-address.diff
 Patch8:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-highchar-filename.diff
+BuildRequires:	libtool
+BuildRequires:	pkgconfig
 BuildRequires:	libgsasl-devel
 BuildRequires:	gnutls-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -145,4 +147,3 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}.so
 %{_includedir}/%{name}/
 %{_libdir}/pkgconfig/*.pc
-
