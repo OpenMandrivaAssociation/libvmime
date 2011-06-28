@@ -4,7 +4,7 @@
 
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel 2
 %else
 # Old distros
 %define subrel 1
@@ -116,11 +116,6 @@ rm -rf %{buildroot}
 
 %makeinstall_std
 
-# Complete the libvmime07 renaming at some places
-mkdir -p %{buildroot}%{_includedir}/%{name}/
-mv -f %{buildroot}%{_includedir}/{vmime,%{name}}/
-#mv -f %{buildroot}%{_libdir}/pkgconfig/vmime{,07}.pc 
-
 # Remove the static library and libtool .la file
 rm -f %{buildroot}%{_libdir}/%{name}.{a,la}
 
@@ -146,5 +141,5 @@ rm -rf %{buildroot}
 %files -n %{develname}
 %defattr(-,root,root,-)
 %{_libdir}/%{name}.so
-%{_includedir}/%{name}/
+%{_includedir}/vmime/
 %{_libdir}/pkgconfig/*.pc
