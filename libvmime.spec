@@ -32,6 +32,7 @@ BuildRequires:	libtool
 BuildRequires:	pkgconfig
 BuildRequires:	libgsasl-devel
 BuildRequires:	gnutls-devel
+BuildRequires:	zlib-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
