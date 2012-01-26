@@ -2,23 +2,16 @@
 %define	libname %mklibname vmime %{major}
 %define develname %mklibname vmime -d
 
-%if %mandriva_branch == Cooker
-# Cooker
-%define release %mkrel 2
-%else
-# Old distros
-%define subrel 1
-%define release %mkrel 0
-%endif
 
 Summary:	A powerful C++ class library for working with MIME/Internet messages
 Name:		libvmime
-Version:	0.9.1
-Release:	%release
+Version:	0.9.2
+%define	svnrev	581
+Release:	%{?svnrev:0.svn%{svnrev}}.1
 License:	GPLv2+
 Group:		System/Libraries
 URL:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/
-Source0:	http://downloads.sourceforge.net/project/vmime/vmime/0.9/libvmime-%{version}.tar.bz2
+Source0:	http://downloads.sourceforge.net/project/vmime/vmime/0.9/%{name}-%{version}%{?svnrev:+svn%{svnrev}}.tar.bz2
 Patch0:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-0.8.1-attachfnamelen.diff
 Patch1:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-0.8.1-charset-catch.diff
 Patch2:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-0.8.1-header-value-on-next-line.diff
@@ -28,6 +21,9 @@ Patch5:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/v
 Patch6:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-flush-iconv.diff
 Patch7:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-fullname-without-email-address.diff
 Patch8:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-highchar-filename.diff
+Patch9:		http://download.zarafa.com/community/final/7.0/7.0.4-31235/sourcecode/vmime-patches/vmime-empty-bodypart.diff
+Patch10:	http://download.zarafa.com/community/final/7.0/7.0.4-31235/sourcecode/vmime-patches/vmime-mixed-qp-in-parameter.diff
+Patch11:	libvmime-0.9.2-add-missing-gcrypt-linkage.patch
 BuildRequires:	libtool
 BuildRequires:	pkgconfig
 BuildRequires:	libgsasl-devel
@@ -87,7 +83,6 @@ You need it only if the software you are using hasn't been updated
 to work with the newer version and the newer API.
 
 %prep
-
 %setup -q -n libvmime-%{version}
 %patch0 -p1
 %patch1 -p1
@@ -98,6 +93,9 @@ to work with the newer version and the newer API.
 %patch6 -p1
 %patch7 -p0
 %patch8 -p0
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1 -b .libgcrypt~
 
 %build
 # Needed to apply branding patch
