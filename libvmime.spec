@@ -26,9 +26,9 @@ Patch10:	http://download.zarafa.com/community/final/7.0/7.0.4-31235/sourcecode/v
 Patch11:	libvmime-0.9.2-add-missing-gcrypt-linkage.patch
 BuildRequires:	libtool
 BuildRequires:	pkgconfig
-BuildRequires:	libgsasl-devel
-BuildRequires:	gnutls-devel
-BuildRequires:	zlib-devel
+BuildRequires:	pkgconfig(libgsasl)
+BuildRequires:	pkgconfig(gnutls)
+BuildRequires:	pkgconfig(zlib)
 BuildRequires:	libgcrypt-devel
 
 %description
