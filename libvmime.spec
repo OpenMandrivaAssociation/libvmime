@@ -1,6 +1,6 @@
-%define	major 0
-%define	libname %mklibname vmime %{major}
-%define develname %mklibname vmime -d
+%define	major	0
+%define	libname	%mklibname vmime %{major}
+%define	devname	%mklibname vmime -d
 
 
 Summary:	A powerful C++ class library for working with MIME/Internet messages
@@ -29,7 +29,6 @@ BuildRequires:	pkgconfig
 BuildRequires:	libgsasl-devel
 BuildRequires:	gnutls-devel
 BuildRequires:	zlib-devel
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 VMime is a powerful C++ class library for parsing, generating or
@@ -66,7 +65,7 @@ This package contains an old and deprecated version of libvmime.
 You need it only if the software you are using hasn't been updated
 to work with the newer version and the newer API.
 
-%package -n	%{develname}
+%package -n	%{devname}
 Summary:	Development files for the libvmime library
 Group:		Development/C++
 Requires:	%{libname} >= %{version}-%{release}
@@ -74,7 +73,7 @@ Requires:	pkgconfig
 Provides:	%{name}-devel = %{version}-%{release}
 Obsoletes:	%{mklibname vmime07 -d}
 
-%description -n	%{develname}
+%description -n	%{devname}
 The libvmime package includes header files and libraries necessary
 for developing programs which use the libvmime C++ class library.
 
@@ -83,7 +82,7 @@ You need it only if the software you are using hasn't been updated
 to work with the newer version and the newer API.
 
 %prep
-%setup -q -n libvmime-%{version}
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -110,8 +109,6 @@ export SENDMAIL=%{_sbindir}/sendmail
 %make
 
 %install
-rm -rf %{buildroot}
-
 %makeinstall_std
 
 # Remove the static library and libtool .la file
@@ -120,24 +117,11 @@ rm -f %{buildroot}%{_libdir}/%{name}.{a,la}
 # Remove the documentation dir, as %doc will pick it up
 rm -rf %{buildroot}%{_datadir}/doc
 
-%if %mdkversion < 200900
-%post -n %{libname} -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%postun -n %{libname} -p /sbin/ldconfig
-%endif
-
-%clean
-rm -rf %{buildroot}
-
 %files -n %{libname}
-%defattr(-,root,root,-)
 %doc AUTHORS COPYING ChangeLog
 %{_libdir}/%{name}.so.%{major}*
 
-%files -n %{develname}
-%defattr(-,root,root,-)
+%files -n %{devname}
 %{_libdir}/%{name}.so
 %{_includedir}/vmime/
 %{_libdir}/pkgconfig/*.pc
