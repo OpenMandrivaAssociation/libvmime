@@ -95,12 +95,12 @@ to work with the newer version and the newer API.
 %patch10 -p1
 %patch11 -p1 -b .libgcrypt~
 
-%build
 # Needed to apply branding patch
 #libtoolize --force
 #autoreconf --force --install
 sh ./bootstrap
 
+%build
 export EXTRA_CFLAGS="%{optflags}"
 export SENDMAIL=%{_sbindir}/sendmail
 
