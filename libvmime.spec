@@ -111,7 +111,7 @@ export SENDMAIL=%{_sbindir}/sendmail
 %makeinstall_std
 
 # Remove the static library and libtool .la file
-rm -f %{buildroot}%{_libdir}/%{name}.{a,la}
+rm -f %{buildroot}%{_libdir}/%{name}.a
 
 # Remove the documentation dir, as %doc will pick it up
 rm -rf %{buildroot}%{_datadir}/doc
