@@ -68,8 +68,8 @@ to work with the newer version and the newer API.
 %package -n	%{devname}
 Summary:	Development files for the libvmime library
 Group:		Development/C++
-Requires:	%{libname} >= %{version}-%{release}
-Provides:	%{name}-devel = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
+Provides:	%{name}-devel = %{EVRD}
 Obsoletes:	%{mklibname vmime07 -d}
 
 %description -n	%{devname}
