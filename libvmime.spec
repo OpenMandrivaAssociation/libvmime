@@ -69,7 +69,6 @@ to work with the newer version and the newer API.
 Summary:	Development files for the libvmime library
 Group:		Development/C++
 Requires:	%{libname} >= %{version}-%{release}
-Requires:	pkgconfig
 Provides:	%{name}-devel = %{version}-%{release}
 Obsoletes:	%{mklibname vmime07 -d}
 
