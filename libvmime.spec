@@ -29,6 +29,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	libgsasl-devel
 BuildRequires:	gnutls-devel
 BuildRequires:	zlib-devel
+BuildRequires:	libgcrypt-devel
 
 %description
 VMime is a powerful C++ class library for parsing, generating or
