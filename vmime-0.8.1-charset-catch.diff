@@ -1,0 +1,17 @@
+diff -Nurb libvmime-0.8.1.orig/src/word.cpp libvmime-0.8.1.patched/src/word.cpp
+--- libvmime-0.8.1.orig/src/word.cpp	2006-10-02 15:44:00.000000000 +0200
++++ libvmime-0.8.1.patched/src/word.cpp	2007-12-12 20:26:55.267497149 +0100
+@@ -616,7 +616,13 @@
+ {
+ 	string out;
+ 
++	try {
+ 	charset::convert(m_buffer, out, m_charset, dest);
++	}
++	catch (vmime::exception &e) {
++		// copy 'word' as text
++		out = m_buffer;
++	}
+ 
+ 	return (out);
+ }

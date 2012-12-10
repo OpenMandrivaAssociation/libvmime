@@ -1,0 +1,66 @@
+--- vmime-clean/src/charsetConverter.cpp	(revision 585)
++++ vmime/src/charsetConverter.cpp	(working copy)
+@@ -119,6 +119,7 @@
+ 	size_t inPos = 0;
+ 
+ 	bool prevIsInvalid = false;
++	bool breakAfterNext = false;
+ 
+ 	while (true)
+ 	{
+@@ -126,11 +127,12 @@
+ 		size_t inLength = static_cast <size_t>(in.read(inBuffer + inPos, sizeof(inBuffer) - inPos) + inPos);
+ 		size_t outLength = sizeof(outBuffer);
+ 
+-		const char* inPtr = inBuffer;
++		const char* inPtr = breakAfterNext ? NULL : inBuffer;
++		size_t *ptrLength = breakAfterNext ? NULL : &inLength;
+ 		char* outPtr = outBuffer;
+ 
+ 		// Convert input bytes
+-		if (iconv(cd, ICONV_HACK(&inPtr), &inLength,
++		if (iconv(cd, ICONV_HACK(&inPtr), ptrLength,
+ 			      &outPtr, &outLength) == static_cast <size_t>(-1))
+ 		{
+ 			// Illegal input sequence or input sequence has no equivalent
+@@ -170,9 +172,12 @@
+ 			prevIsInvalid = false;
+ 		}
+ 
+-		// Check for end of data
++		if (breakAfterNext)
++			break;
++
++		// Check for end of data, loop again to flush stateful data from iconv
+ 		if (in.eof() && inPos == 0)
+-			break;
++			breakAfterNext = true;
+ 	}
+ }
+ 
+--- vmime-clean/tests/parser/charsetTest.cpp	(revision 585)
++++ vmime/tests/parser/charsetTest.cpp	(working copy)
+@@ -100,6 +100,7 @@
+ 		VMIME_TEST(testFilterValid1)
+ 		VMIME_TEST(testFilterValid2)
+ 		VMIME_TEST(testFilterValid3)
++		VMIME_TEST(testEncodingHebrew1255)
+ 
+ 		// Test invalid input
+ 		VMIME_TEST(testFilterInvalid1)
+@@ -227,6 +228,15 @@
+ 		VASSERT_EQ("1", toHex(expectedOut), toHex(actualOut));
+ 	}
+ 
++	void testEncodingHebrew1255()
++	{
++		// hewbrew string in windows-1255 charset
++		const char data[] = "\xe9\xf9\xf7\xf8\xe9\xf9\xf8\xf7\xe9\xe9\xf9";
++		vmime::word w = vmime::word(data, "windows-1255");
++		vmime::string encoded = w.generate();
++		// less than 60% ascii, base64 received
++		VASSERT_EQ("1", "=?windows-1255?B?6fn3+On5+Pfp6fk=?=", encoded);
++	}
+ 
+ 	// Conversion to hexadecimal for easier debugging
+ 	static const vmime::string toHex(const vmime::string str)

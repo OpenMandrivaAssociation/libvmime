@@ -1,0 +1,115 @@
+--- src/parameter.cpp	2011-06-28 12:36:32.931619972 +0200
++++ src/parameter.cpp.oden	2011-06-28 12:36:47.237711604 +0200
+@@ -249,7 +249,8 @@ void parameter::parse(const std::vector
+ 	m_value.setCharset(ch);
+ }
+ 
+-
++// Zarafa always wants this compile option on. Lazy to define here, but it works.
++#define VMIME_ALWAYS_GENERATE_7BIT_PARAMETER 1
+ void parameter::generate(utility::outputStream& os, const string::size_type maxLineLength,
+ 	const string::size_type curLinePos, string::size_type* newLinePos) const
+ {
+@@ -268,17 +269,19 @@ void parameter::generate(utility::output
+ 	// value is to be generated.
+ 
+ 	// A stream for a temporary storage
+-	std::ostringstream sevenBitBuffer;
++	std::string sevenBitBuffer;
++	utility::outputStreamStringAdapter sevenBitStream(sevenBitBuffer);
+ 
+ 	string::size_type pos = curLinePos;
+ 
+ 	if (pos + name.length() + 10 + value.length() > maxLineLength)
+ 	{
+-		sevenBitBuffer << NEW_LINE_SEQUENCE;
++		sevenBitStream << NEW_LINE_SEQUENCE;
+ 		pos = NEW_LINE_SEQUENCE_LENGTH;
+ 	}
+ 
+ 	bool needQuoting = false;
++	bool needQuotedPrintable = false;
+ 	string::size_type valueLength = 0;
+ 
+ 	// Use worst-case length name.length()+2 for 'name=' part of line
+@@ -309,18 +312,23 @@ void parameter::generate(utility::output
+ 			needQuoting = true;
+ 			break;
+ 		}
++		if (!parserHelpers::isAscii(value[i]))
++		{
++			needQuotedPrintable = true;
++			needQuoting = true;
++		}
+ 	}
+ 
+ 	const bool cutValue = (valueLength != value.length());  // has the value been cut?
+ 
+ 	if (needQuoting)
+ 	{
+-		sevenBitBuffer << name << "=\"";
++		sevenBitStream << name << "=\"";
+ 		pos += name.length() + 2;
+ 	}
+ 	else
+ 	{
+-		sevenBitBuffer << name << "=";
++		sevenBitStream << name << "=";
+ 		pos += name.length() + 1;
+ 	}
+ 
+@@ -332,18 +340,29 @@ void parameter::generate(utility::output
+ 	const bool alwaysEncode = m_value.getCharset().getRecommendedEncoding(recommendedEnc);
+ 	bool extended = alwaysEncode;
+ 
+-	for (string::size_type i = 0 ; (i < value.length()) && (pos < maxLineLength - 4) ; ++i)
++	if (needQuotedPrintable)
++	{
++		// send the name in quoted-printable, so outlook express et.al. will understand the real filename
++		size_t oldlen = sevenBitBuffer.length();
++		m_value.generate(sevenBitStream);
++		pos += sevenBitBuffer.length() - oldlen;
++		extended = true;		// also send with RFC-2231 encoding
++	}
++	else
++	{
++	// do not chop off this value, but just add the complete name as one header line.
++	for (string::size_type i = 0 ; (i < value.length()) /*&& (pos < maxLineLength - 4) */ ; ++i)
+ 	{
+ 		const char_t c = value[i];
+ 
+ 		if (/* needQuoting && */ (c == '"' || c == '\\'))  // 'needQuoting' is implicit
+ 		{
+-			sevenBitBuffer << '\\' << value[i];  // escape 'x' with '\x'
++			sevenBitStream << '\\' << value[i];  // escape 'x' with '\x'
+ 			pos += 2;
+ 		}
+ 		else if (parserHelpers::isAscii(c))
+ 		{
+-			sevenBitBuffer << value[i];
++			sevenBitStream << value[i];
+ 			++pos;
+ 		}
+ 		else
+@@ -351,10 +370,11 @@ void parameter::generate(utility::output
+ 			extended = true;
+ 		}
+ 	}
++	} // !needQuotedPrintable
+ 
+ 	if (needQuoting)
+ 	{
+-		sevenBitBuffer << '"';
++		sevenBitStream << '"';
+ 		++pos;
+ 	}
+ 
+@@ -532,7 +552,7 @@ void parameter::generate(utility::output
+ 		// "7bit/us-ascii" will suffice in this case.
+ 
+ 		// Output what has been stored in temporary buffer so far
+-		os << sevenBitBuffer.str();
++		os << sevenBitBuffer;
+ 	}
+ #endif // !VMIME_ALWAYS_GENERATE_7BIT_PARAMETER
+ 

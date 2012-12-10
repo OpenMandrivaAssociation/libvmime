@@ -1,0 +1,27 @@
+diff -Nurb libvmime-0.8.1.orig/src/headerField.cpp libvmime-0.8.1.patched/src/headerField.cpp
+--- libvmime-0.8.1.orig/src/headerField.cpp	2007-12-12 22:49:58.799934396 +0100
++++ libvmime-0.8.1.patched/src/headerField.cpp	2007-12-12 23:12:33.884621899 +0100
+@@ -151,14 +151,12 @@
+ 					{
+ 						contentsEnd = pos;
+ 						pos += 2;
+-						break;
+ 					}
+ 					else if (c == '\n')
+ 					{
+ 						contentsEnd = pos;
+ 						++pos;
+-						break;
+-					}
++					} else {
+ 
+ 					while (pos < end)
+ 					{
+@@ -180,6 +178,7 @@
+ 
+ 						++pos;
+ 					}
++					}
+ 
+ 					// Handle the case of folded lines
+ 					if (buffer[pos] == ' ' || buffer[pos] == '\t')

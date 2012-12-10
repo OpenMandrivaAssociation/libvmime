@@ -7,7 +7,7 @@ Summary:	A powerful C++ class library for working with MIME/Internet messages
 Name:		libvmime
 Version:	0.9.2
 %define	svnrev	581
-Release:	%{?svnrev:0.svn%{svnrev}}.1
+Release:	%{?svnrev:0.svn%{svnrev}}.2
 License:	GPLv2+
 Group:		System/Libraries
 URL:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/
@@ -24,6 +24,7 @@ Patch8:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/v
 Patch9:		http://download.zarafa.com/community/final/7.0/7.0.4-31235/sourcecode/vmime-patches/vmime-empty-bodypart.diff
 Patch10:	http://download.zarafa.com/community/final/7.0/7.0.4-31235/sourcecode/vmime-patches/vmime-mixed-qp-in-parameter.diff
 Patch11:	libvmime-0.9.2-add-missing-gcrypt-linkage.patch
+Patch12:	libvmime-0.9.2-gnutls.patch
 BuildRequires:	libtool
 BuildRequires:	pkgconfig
 BuildRequires:	pkgconfig(libgsasl)
@@ -94,6 +95,7 @@ to work with the newer version and the newer API.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1 -b .libgcrypt~
+%patch12 -p1
 
 # Needed to apply branding patch
 #libtoolize --force
@@ -124,3 +126,4 @@ rm -rf %{buildroot}%{_datadir}/doc
 %{_libdir}/%{name}.so
 %{_includedir}/vmime/
 %{_libdir}/pkgconfig/*.pc
+
