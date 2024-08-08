@@ -21,6 +21,9 @@ BuildRequires:	pkgconfig(libgsasl)
 BuildRequires:	pkgconfig(gnutls)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	libgcrypt-devel
+BuildRequires:	doxygen
+# Just so configuration can figure out it's %{_bindir}/sendmail
+BuildRequires:	postfix
 
 %description
 VMime is a powerful C++ class library for parsing, generating or
