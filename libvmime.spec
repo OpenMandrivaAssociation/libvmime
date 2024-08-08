@@ -20,7 +20,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	pkgconfig(libgsasl)
 BuildRequires:	pkgconfig(gnutls)
 BuildRequires:	pkgconfig(zlib)
-BuildRequires:	libgcrypt-devel
+BuildRequires:	pkgconfig(libgcrypt)
 BuildRequires:	doxygen
 # Just so configuration can figure out it's %{_bindir}/sendmail
 BuildRequires:	postfix
