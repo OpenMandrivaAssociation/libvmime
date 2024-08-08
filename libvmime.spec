@@ -1,31 +1,21 @@
-%define	major	0
-%define	libname	%mklibname vmime %{major}
+%define	major	1
+%define	libname	%mklibname vmime
 %define	devname	%mklibname vmime -d
 
+%define gitdate 20240808
 
 Summary:	A powerful C++ class library for working with MIME/Internet messages
 Name:		libvmime
-Version:	0.9.2
-%define	svnrev	581
-Release:	%{?svnrev:0.svn%{svnrev}}.2
+Version:	0.9.3
+# As of 2024/08/08, upstream "highly recommends" not using their releases and
+# instead using git master.
+Release:	%{?gitdate:0.%{gitdate}.}1
 License:	GPLv2+
 Group:		System/Libraries
-URL:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/
-Source0:	http://downloads.sourceforge.net/project/vmime/vmime/0.9/%{name}-%{version}%{?svnrev:+svn%{svnrev}}.tar.bz2
-Patch0:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-0.8.1-attachfnamelen.diff
-Patch1:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-0.8.1-charset-catch.diff
-Patch2:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-0.8.1-header-value-on-next-line.diff
-Patch3:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-0.8.1-unicode-1-1-utf-7-charset.diff
-Patch4:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-0.9.0-undisclosed-recipients.diff
-Patch5:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-0.9.2-infinite-loop.diff
-Patch6:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-flush-iconv.diff
-Patch7:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-fullname-without-email-address.diff
-Patch8:		http://download.zarafa.com/community/final/7.0/7.0.0-27791/sourcecode/vmime-patches/vmime-highchar-filename.diff
-Patch9:		http://download.zarafa.com/community/final/7.0/7.0.4-31235/sourcecode/vmime-patches/vmime-empty-bodypart.diff
-Patch10:	http://download.zarafa.com/community/final/7.0/7.0.4-31235/sourcecode/vmime-patches/vmime-mixed-qp-in-parameter.diff
-Patch11:	libvmime-0.9.2-add-missing-gcrypt-linkage.patch
-Patch12:	libvmime-0.9.2-gnutls.patch
-BuildRequires:	libtool
+URL:		https://vmime.org/
+Source0:	https://github.com/kisli/vmime/archive/refs/heads/master.tar.gz#/libvmime-%{gitdate}.tar.gz
+BuildSystem:	cmake
+BuildOption:	-DVMIME_BUILD_STATIC_LIBRARY:BOOL=OFF
 BuildRequires:	pkgconfig
 BuildRequires:	pkgconfig(libgsasl)
 BuildRequires:	pkgconfig(gnutls)
@@ -81,49 +71,12 @@ This package contains an old and deprecated version of libvmime.
 You need it only if the software you are using hasn't been updated
 to work with the newer version and the newer API.
 
-%prep
-%setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p0
-%patch8 -p0
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1 -b .libgcrypt~
-%patch12 -p1
-
-# Needed to apply branding patch
-#libtoolize --force
-#autoreconf --force --install
-sh ./bootstrap
-
-%build
-export EXTRA_CFLAGS="%{optflags}"
-export SENDMAIL=%{_sbindir}/sendmail
-
-%configure2_5x
-%make
-
-%install
-%makeinstall_std
-
-# Remove the static library and libtool .la file
-rm -f %{buildroot}%{_libdir}/%{name}.a
-
-# Remove the documentation dir, as %doc will pick it up
-rm -rf %{buildroot}%{_datadir}/doc
-
 %files -n %{libname}
-%doc AUTHORS COPYING ChangeLog
+%doc AUTHORS COPYING
 %{_libdir}/%{name}.so.%{major}*
 
 %files -n %{devname}
 %{_libdir}/%{name}.so
 %{_includedir}/vmime/
 %{_libdir}/pkgconfig/*.pc
-
+%{_libdir}/cmake/vmime
